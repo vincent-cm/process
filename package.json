@@ -1,0 +1,23 @@
+{
+  "name": "watermark-artwritter",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@jimp/bmp": "^0.16.1",
+    "@jimp/gif": "^0.16.1",
+    "@jimp/jpeg": "^0.16.1",
+    "@jimp/png": "^0.16.1",
+    "@jimp/tiff": "^0.16.1",
+    "etl": "^0.6.12",
+    "iconv-lite": "^0.6.2",
+    "jimp": "^0.16.1",
+    "unzipper": "^0.10.11",
+    "walk": "^2.3.14"
+  }
+}
