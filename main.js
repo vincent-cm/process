@@ -3,8 +3,8 @@ const fs = require("fs");
 const path = require("path");
 const walk = require("walk");
 const unzipper = require("unzipper");
-// const pathToFiles = "/Volumes/Files/Chinese works of art/output/";
-const pathToFiles = "files";
+const pathToFiles = "/Volumes/Files/Chinese works of art/output/";
+// const pathToFiles = "files";
 const pathToOutput = "output";
 const iconv = require("iconv-lite");
 const detect = require("charset-detector");
@@ -549,7 +549,7 @@ const errorLogPath = __dirname + "/" + pathToOutput + "/" + "error.log";
 const logPath = __dirname + "/" + pathToOutput + "/" + "message.log";
 const parsedPath = __dirname + "/" + pathToOutput + "/" + "parsed.log";
 const descPath = __dirname + "/" + pathToOutput + "/" + "desc.json";
-const picPath = __dirname + "/" + pathToOutput + "/pictest/";
+const picPath = __dirname + "/" + pathToOutput + "/pic/";
 const writeToLog = (fileName, msg, isError) => {
   const logMsg = isError
     ? "Error while parsing: " + fileName + "\n" + msg + "\n"
@@ -563,8 +563,8 @@ const writeToParsed = (msg) => {
 var processingArr = [];
 const descsArr = JSON.parse(fs.readFileSync(descPath, "utf8").toString());
 // clear logs at start
-// fs.truncateSync(errorLogPath, 0);
-// fs.truncateSync(logPath, 0);
+fs.truncateSync(errorLogPath, 0);
+fs.truncateSync(logPath, 0);
 
 const walker = walk.walk(pathToFiles, options);
 
@@ -582,7 +582,7 @@ walker.on("directories", (root, dirStatsArray, next) => {
 walker.on("file", (root, fileStat, next) => {
   writeToLog("", `Under dir: "${root}"`, false);
 
-  // skip file names starting wi th '.'
+  // skip file names starting with '.'
   if (fileStat.name.substr(0, 1) === ".") {
     writeToLog("", `Skipped: "${fileStat.name}"`, false);
     next();
@@ -600,11 +600,7 @@ walker.on("file", (root, fileStat, next) => {
     .toString()
     .split(String.fromCharCode(10));
 
-  if (
-    parsedItems.find(
-      (el) => el.includes(fileStat.name) || fileStat.name.includes(el)
-    )
-  ) {
+  if (parsedItems.find((el) => el === fileStat.name)) {
     writeToLog("", `Skipped ${fileStat.name}`, false);
     next();
     return;
@@ -823,12 +819,9 @@ const processImg = async (buffer, text, filePath, zipName) => {
   //   return !!(urlName.includes(numberName) || numberName.includes(urlName));
   // })?.desc;
 
-  const descText =
-    "原為碧玉，現呈深褐色，原因除了早先埋藏受沁變色之外，收藏流傳過程中可能也略有染色。此類雙身獸紋玉璧於戰國中期開始出現，西漢廣為流行。常見於大貴族墓中，或作為棺上嵌件，或枕於墓主人頭部下方及前胸後背。此外，也常見於祭祀遺址中，可知此類大璧雖然製作看似簡略，但規格極高，絕非一般之物。乾隆皇帝對此玉璧詳加觀察考釋，並賦詩於玉璧器緣和木座背面。題詩內容為,「製傳自姬周，稱謂率炎劉，名實何常定，完全喜尚留，夔紋圍外緻，栗顆蔟中稠，庇蔭登嘉榖，王孫寶有由。乾隆戌戍仲春御題。」";
-
   try {
     const fileName = picPath + (text ? text : "") + " " + filePath;
-    readPromise.write(fileName); // save
+    await readPromise.writeAsync(fileName); // save
     writeToLog(
       "",
       `Success: "creation of plain image ${filePath} in ${zipName}"`,
